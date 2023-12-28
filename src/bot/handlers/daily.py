@@ -27,7 +27,7 @@ async def daily(message: types.Message):
         return await message.answer("🛒 There is not video!")
 
     for video in videos:
-        if video == ".gitignore":
+        if video == ".gitignore" or ".jpg" in video:
             continue
 
         reply_markup.add(
