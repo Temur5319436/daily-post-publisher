@@ -21,7 +21,7 @@ def daily():
         details = {}
 
     for video in videos:
-        if video == ".gitignore":
+        if video == ".gitignore" or ".jpg" in video:
             continue
 
         if video in details:

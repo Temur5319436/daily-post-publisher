@@ -1,6 +1,7 @@
 .env
 log.txt
 /assets/details.json
+/assets/cookies.json
 
 /__pycache__
 /.venv
