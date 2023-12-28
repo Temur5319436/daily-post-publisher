@@ -1,4 +1,5 @@
 import os
+import json
 
 from src.loader import dp, bot
 from src.config import BASE_PATH
@@ -61,8 +62,7 @@ async def video_show(query: types.CallbackQuery, callback_data: dict):
         pass
 
     await query.message.answer(
-        parse_mode="HTML",
-        text=f"⚙️ You can select one option.\n\nFile: <b>{callback_data['name']}</b>",
+        text=f"⚙️ You can select one option.\n\nFile: {callback_data['name']}",
         reply_markup=InlineKeyboardMarkup(
             inline_keyboard=[
                 [
@@ -142,6 +142,28 @@ async def add_to_daily(query: types.CallbackQuery, callback_data: dict):
         await query.message.delete()
     except:
         pass
+
+    try:
+        with open(f"{BASE_PATH}/assets/details.json") as file:
+            details = json.load(file)
+    except FileNotFoundError:
+        details = None
+
+    if details:
+        details[callback_data["name"]] = {
+            "caption": callback_data["name"],
+            "counter": 1,
+        }
+    else:
+        details = {
+            callback_data["name"]: {
+                "caption": callback_data["name"],
+                "counter": 1,
+            }
+        }
+
+    with open(f"{BASE_PATH}/assets/details.json", "w") as file:
+        file.write(json.dumps(details, indent=4))
 
     try:
         os.rename(

@@ -1,13 +1,20 @@
 import os
+import json
 
 from src.loader import dp
 from src.config import BASE_PATH
 
 from aiogram import types
+from aiogram.dispatcher import FSMContext
 from aiogram.utils.callback_data import CallbackData
+from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types.inline_keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 
 daily_video_cb = CallbackData("daily-video", "name", "action")
+
+
+class SetCaptionForm(StatesGroup):
+    caption = State()
 
 
 @dp.message_handler(commands=["daily"])
@@ -42,11 +49,23 @@ async def video_show(query: types.CallbackQuery, callback_data: dict):
     except:
         pass
 
+    with open(f"{BASE_PATH}/assets/details.json") as file:
+        details = json.load(file)
+
+    detail = details[callback_data["name"]]
+
     await query.message.answer(
-        parse_mode="HTML",
-        text=f"⚙️ File: <b>{callback_data['name']}</b>",
+        text=f"⚙️ File: {callback_data['name']}\n\n💬 Caption:\n{detail['caption']}\n\n🔄 Counter: {detail['counter']}",
         reply_markup=InlineKeyboardMarkup(
             inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="💬 Set caption",
+                        callback_data=daily_video_cb.new(
+                            name=callback_data["name"], action="set-caption"
+                        ),
+                    ),
+                ],
                 [
                     InlineKeyboardButton(
                         text="👁 Watch",
@@ -108,3 +127,40 @@ async def delete_video(query: types.CallbackQuery, callback_data: dict):
         await query.answer(text="✅ The video is deleted!")
     except:
         await query.answer(text="⚠️ The video can not be deleted!")
+
+
+@dp.callback_query_handler(daily_video_cb.filter(action="set-caption"))
+async def caption(query: types.CallbackQuery, state: FSMContext, callback_data: dict):
+    await query.answer()
+
+    try:
+        await query.message.delete()
+    except:
+        pass
+
+    await SetCaptionForm.caption.set()
+
+    async with state.proxy() as data:
+        data["file"] = callback_data["name"]
+
+    await query.message.answer("📝 Enter caption for this video:")
+
+
+@dp.message_handler(state=SetCaptionForm.caption)
+async def set_caption(message: types.Message, state: FSMContext):
+    text = message.text
+
+    async with state.proxy() as data:
+        file_name = data["file"]
+
+    with open(f"{BASE_PATH}/assets/details.json") as file:
+        details = json.load(file)
+
+    details[file_name]["caption"] = text
+
+    with open(f"{BASE_PATH}/assets/details.json", "w") as file:
+        file.write(json.dumps(details, indent=4))
+
+    await state.finish()
+
+    await message.answer("✅ The caption has been set.")
