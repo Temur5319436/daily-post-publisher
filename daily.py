@@ -39,6 +39,8 @@ def daily():
             f"{DAILY_PATH}/{video}", caption=caption.replace(".mp4", "")
         )
 
+        print(f"The {video} is uploaded!")
+
     with open(f"{BASE_PATH}/assets/details.json", "w") as file:
         file.write(json.dumps(details, indent=4))
 
