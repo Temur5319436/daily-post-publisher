@@ -9,7 +9,7 @@ async def on_startup(dp):
     await bot.set_webhook(f"{config.WEBHOOK_HOST}{config.WEBHOOK_PATH}")
 
 
-def main():
+def app():
     if config.ENV == "production":
         executor.start_webhook(
             dispatcher=dp,
@@ -25,4 +25,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    app()
