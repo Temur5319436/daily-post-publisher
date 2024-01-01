@@ -2,3 +2,4 @@ aiogram==2.19
 environs==10.0.0
 instagrapi==1.19.7
 gunicorn==21.2.0
+Pillow==10.1.0
