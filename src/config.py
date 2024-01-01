@@ -7,7 +7,7 @@ env.read_env()
 
 ENV = env.str("ENV")
 
-BASE_PATH = os.getcwd()
+BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 
 INSTAGRAM_USERNAME = env.str("INSTAGRAM_USERNAME")
 INSTAGRAM_PASSWORD = env.str("INSTAGRAM_PASSWORD")
