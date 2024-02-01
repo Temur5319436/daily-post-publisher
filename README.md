@@ -90,6 +90,9 @@ The daily.py script will publish the videos from the assets/daily folder to the 
 This example schedules the daily.py script to run daily at midnight. Adjust the timing according to your requirements.
 Save the crontab file, and the script will be executed automatically at the scheduled time.
 
+### Setup project with systemd
+
+* [Setup a python script as a service through systemctl/systemd](https://medium.com/codex/setup-a-python-script-as-a-service-through-systemctl-systemd-f0cc55a42267)
 
 ### License
 
